@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventário de Maquiagem</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; background-color: #fbe4ea; }
+        h1 { color: #d63384; }
+        input, button { padding: 10px; margin: 5px; }
+        ul { list-style-type: none; padding: 0; }
+        li { background: #fff; padding: 10px; margin: 5px; border-radius: 5px; box-shadow: 2px 2px 5px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body>
+
+    <h1>Inventário de Maquiagem e Esmaltes</h1>
+    <input type="text" id="item" placeholder="Nome do produto">
+    <button onclick="adicionarItem()">Adicionar</button>
+    
+    <ul id="lista"></ul>
+
+    <script>
+        function adicionarItem() {
+            var item = document.getElementById("item").value;
+            if (item.trim() !== "") {
+                fetch('/adicionar', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nome: item })
+                }).then(response => response.json()).then(data => {
+                    alert(data.mensagem);
+                    document.getElementById("item").value = "";
+                    listarItens();
+                });
+            } else {
+                alert("Digite um nome válido!");
+            }
+        }
+
+        function listarItens() {
+            fetch('/listar')
+                .then(response => response.json())
+                .then(produtos => {
+                    var lista = document.getElementById("lista");
+                    lista.innerHTML = "";
+                    produtos.forEach(produto => {
+                        var li = document.createElement("li");
+                        li.innerText = produto.nome;
+                        lista.appendChild(li);
+                    });
+                });
+        }
+
+        document.addEventListener("DOMContentLoaded", listarItens);
+    </script>
+
+</body>
+</html>
