@@ -6,44 +6,43 @@
     <title>Inventário de Maquiagem</title>
 
     <Style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            text-align: center;
-            background-color: #F8F8F8;
-            margin: 0;
-            padding: 20px;
-        }
+body {
+    font-family: 'Poppins', sans-serif;
+    text-align: center;
+    background-color: #F8F8F8;
+    margin: 0;
+    padding: 20px;
+}
 
-        h1 {
-            color: #6096BA;
-            font-size: 28px;
-        }
+h1 {
+    color: #6096BA;
+    font-size: 28px;
+}
 
-        input {
-            padding: 10px;
-            width: 300px;
-            border: 2px solid #6096BA;
-            border-radius: 5px;
-            font-size: 16px;
-            background-color: #BFD7EA;
-            color: #3A5A40;
-        }
+input {
+    padding: 10px;
+    width: 90%; /* Agora ajusta ao tamanho da tela */
+    max-width: 300px;
+    border: 2px solid #6096BA;
+    border-radius: 5px;
+    font-size: 16px;
+    background-color: #BFD7EA;
+    color: #3A5A40;
+}
 
-        button {
-            padding: 10px 20px;
-            margin: 5px;
-            background-color: #C1E1C1;
-            color: #3A5A40;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: 0.3s ease;
-        }
-
-        button:hover {
-            background-color: #91C788;
-        }
+button {
+    padding: 10px 20px;
+    margin: 5px;
+    background-color: #C1E1C1;
+    color: #3A5A40;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s ease;
+    width: 100%; /* Ajusta ao tamanho da tela */
+    max-width: 150px;
+}
 
 ul {
     list-style-type: none;
@@ -54,12 +53,14 @@ li {
     background: white;
     padding: 15px;
     margin: 10px auto;
-    width: 350px;
+    width: 90%; /* Agora ajusta ao tamanho da tela */
+    max-width: 350px;
     border-radius: 8px;
     box-shadow: 2px 2px 10px rgba(211, 211, 211, 0.5);
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap; /* Garante que se ajuste a telas menores */
 }
 
 .item-texto {
@@ -71,7 +72,8 @@ li {
 
 .botoes {
     display: flex;
-    gap: 10px; /* Espaçamento entre os botões */
+    gap: 10px;
+    flex-wrap: wrap; /* Se adapta à tela menor */
 }
 
 .botao-editar {
@@ -99,6 +101,21 @@ li {
 
 .botao-excluir:hover {
     background-color: #cc2f2f;
+}
+        @media (max-width: 768px) {
+    li {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .botoes {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    button {
+        max-width: 100%;
+    }
 }
     </Style>
 </head>
