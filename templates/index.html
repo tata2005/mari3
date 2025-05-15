@@ -115,42 +115,61 @@
             }
         }
 
-        function listarItens() {
-            fetch('/listar')
-                .then(response => response.json())
-                .then(produtos => {
-                    var lista = document.getElementById("lista");
-                    lista.innerHTML = "";
+function listarItens() {
+    fetch('/listar')
+        .then(response => response.json())
+        .then(produtos => {
+            var lista = document.getElementById("lista");
+            lista.innerHTML = ""; // Limpa a lista antes de adicionar os novos elementos
 
-                    produtos.forEach(produto => {
-                        var li = document.createElement("li");
+            produtos.forEach(produto => {
+                var li = document.createElement("li");
 
-                        var inputEditar = document.createElement("input");
-                        inputEditar.type = "text";
-                        inputEditar.value = produto.nome;
-                        inputEditar.id = "edit-" + produto.id;
+                var inputEditar = document.createElement("input");
+                inputEditar.type = "text";
+                inputEditar.value = produto.nome;
+                inputEditar.id = "edit-" + produto.id;
+                inputEditar.disabled = true; // Campo começa desativado
 
-                        var botaoEditar = document.createElement("button");
-                        botaoEditar.innerText = "✏️ Editar";
-                        botaoEditar.classList.add("botao-editar");
-                        botaoEditar.onclick = function() {
-                            editarItem(produto.id, inputEditar.value);
-                        };
+                var botaoEditar = document.createElement("button");
+                botaoEditar.innerText = "✏️ Editar";
+                botaoEditar.classList.add("botao-editar");
+                botaoEditar.onclick = function() {
+                    inputEditar.disabled = false; // Habilita edição ao clicar no botão
+                    inputEditar.focus(); // Dá foco no campo de edição
+                };
 
-                        var botaoExcluir = document.createElement("button");
-                        botaoExcluir.innerText = "❌ Excluir";
-                        botaoExcluir.classList.add("botao-excluir");
-                        botaoExcluir.onclick = function() {
-                            excluirItem(produto.id);
-                        };
+                var botaoSalvar = document.createElement("button");
+                botaoSalvar.innerText = "💾 Salvar";
+                botaoSalvar.classList.add("botao-salvar");
+                botaoSalvar.style.display = "none"; // Oculta o botão de salvar até que seja necessário
+                botaoSalvar.onclick = function() {
+                    editarItem(produto.id, inputEditar.value);
+                    inputEditar.disabled = true; // Bloqueia o campo novamente após salvar
+                    botaoSalvar.style.display = "none"; // Esconde o botão de salvar
+                };
 
-                        li.appendChild(inputEditar);
-                        li.appendChild(botaoEditar);
-                        li.appendChild(botaoExcluir);
-                        lista.appendChild(li);
-                    });
-                });
-        }
+                botaoEditar.onclick = function() {
+                    inputEditar.disabled = false;
+                    inputEditar.focus();
+                    botaoSalvar.style.display = "inline"; // Exibe o botão de salvar
+                };
+
+                var botaoExcluir = document.createElement("button");
+                botaoExcluir.innerText = "❌ Excluir";
+                botaoExcluir.classList.add("botao-excluir");
+                botaoExcluir.onclick = function() {
+                    excluirItem(produto.id);
+                };
+
+                li.appendChild(inputEditar);
+                li.appendChild(botaoEditar);
+                li.appendChild(botaoSalvar);
+                li.appendChild(botaoExcluir);
+                lista.appendChild(li);
+            });
+        });
+}
 
         function excluirItem(id) {
             fetch(`/excluir/${id}`, {
