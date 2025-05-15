@@ -12,7 +12,7 @@ class Produto(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(100), nullable=False)
 
-# Criar o banco de dados
+
 with app.app_context():
     db.create_all()
 
@@ -32,6 +32,25 @@ def adicionar_produto():
 def listar_produtos():
     produtos = Produto.query.all()
     return jsonify([{'id': p.id, 'nome': p.nome} for p in produtos])
+
+@app.route('/excluir/<int:id>', methods=['DELETE'])
+def excluir_produto(id):
+    produto = Produto.query.get(id)
+    if produto:
+        db.session.delete(produto)
+        db.session.commit()
+        return jsonify({'mensagem': 'Produto excluído!'})
+    return jsonify({'mensagem': 'Produto não encontrado!'}), 404
+
+@app.route('/editar/<int:id>', methods=['PUT'])
+def editar_produto(id):
+    data = request.json
+    produto = Produto.query.get(id)
+    if produto:
+        produto.nome = data['nome']
+        db.session.commit()
+        return jsonify({'mensagem': 'Produto atualizado!'})
+    return jsonify({'mensagem': 'Produto não encontrado!'}), 404
 
 import os
 
