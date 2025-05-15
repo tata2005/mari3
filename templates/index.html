@@ -45,48 +45,61 @@
             background-color: #91C788;
         }
 
-        ul {
-            list-style-type: none;
-            padding: 0;
-        }
+ul {
+    list-style-type: none;
+    padding: 0;
+}
 
-        li {
-            background: white;
-            padding: 15px;
-            margin: 10px auto;
-            width: 320px;
-            border-radius: 8px;
-            box-shadow: 2px 2px 10px rgba(211, 211, 211, 0.5);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+li {
+    background: white;
+    padding: 15px;
+    margin: 10px auto;
+    width: 350px;
+    border-radius: 8px;
+    box-shadow: 2px 2px 10px rgba(211, 211, 211, 0.5);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
 
-        input[type="text"] {
-            flex-grow: 1;
-            margin-right: 10px;
-            background-color: #BFD7EA;
-            border: 1px solid #6096BA;
-            color: #3A5A40;
-        }
+.item-texto {
+    flex-grow: 1;
+    font-size: 18px;
+    font-weight: bold;
+    color: #3A5A40;
+}
 
-        .botao-editar {
-            background-color: #6d3fec;
-            color: white;
-        }
+.botoes {
+    display: flex;
+    gap: 10px; /* Espaçamento entre os botões */
+}
 
-        .botao-editar:hover {
-            background-color: #5430b3;
-        }
+.botao-editar {
+    background-color: #6d3fec;
+    color: white;
+}
 
-        .botao-excluir {
-            background-color: #ff3b3b;
-            color: white;
-        }
+.botao-editar:hover {
+    background-color: #5430b3;
+}
 
-        .botao-excluir:hover {
-            background-color: #cc2f2f;
-        }
+.botao-salvar {
+    background-color: #ffcc00;
+    color: #3A5A40;
+}
+
+.botao-salvar:hover {
+    background-color: #e6b800;
+}
+
+.botao-excluir {
+    background-color: #ff3b3b;
+    color: white;
+}
+
+.botao-excluir:hover {
+    background-color: #cc2f2f;
+}
     </Style>
 </head>
 <body>
@@ -120,39 +133,43 @@ function listarItens() {
         .then(response => response.json())
         .then(produtos => {
             var lista = document.getElementById("lista");
-            lista.innerHTML = ""; // Limpa a lista antes de adicionar os novos elementos
+            lista.innerHTML = "";
 
             produtos.forEach(produto => {
                 var li = document.createElement("li");
+
+                // Criar área de texto
+                var itemTexto = document.createElement("span");
+                itemTexto.classList.add("item-texto");
+                itemTexto.innerText = produto.nome;
 
                 var inputEditar = document.createElement("input");
                 inputEditar.type = "text";
                 inputEditar.value = produto.nome;
                 inputEditar.id = "edit-" + produto.id;
-                inputEditar.disabled = true; // Campo começa desativado
+                inputEditar.style.display = "none"; // Oculta o campo de edição
+
+                // Criar bloco de botões
+                var botoes = document.createElement("div");
+                botoes.classList.add("botoes");
 
                 var botaoEditar = document.createElement("button");
                 botaoEditar.innerText = "✏️ Editar";
                 botaoEditar.classList.add("botao-editar");
                 botaoEditar.onclick = function() {
-                    inputEditar.disabled = false; // Habilita edição ao clicar no botão
-                    inputEditar.focus(); // Dá foco no campo de edição
+                    inputEditar.style.display = "inline";
+                    inputEditar.focus();
+                    botaoSalvar.style.display = "inline";
                 };
 
                 var botaoSalvar = document.createElement("button");
                 botaoSalvar.innerText = "💾 Salvar";
                 botaoSalvar.classList.add("botao-salvar");
-                botaoSalvar.style.display = "none"; // Oculta o botão de salvar até que seja necessário
+                botaoSalvar.style.display = "none"; // Oculta até ativado
                 botaoSalvar.onclick = function() {
                     editarItem(produto.id, inputEditar.value);
-                    inputEditar.disabled = true; // Bloqueia o campo novamente após salvar
-                    botaoSalvar.style.display = "none"; // Esconde o botão de salvar
-                };
-
-                botaoEditar.onclick = function() {
-                    inputEditar.disabled = false;
-                    inputEditar.focus();
-                    botaoSalvar.style.display = "inline"; // Exibe o botão de salvar
+                    inputEditar.style.display = "none"; // Oculta campo após salvar
+                    botaoSalvar.style.display = "none"; // Esconde botão salvar
                 };
 
                 var botaoExcluir = document.createElement("button");
@@ -162,10 +179,16 @@ function listarItens() {
                     excluirItem(produto.id);
                 };
 
+                // Adicionar botões ao bloco de botões
+                botoes.appendChild(botaoEditar);
+                botoes.appendChild(botaoSalvar);
+                botoes.appendChild(botaoExcluir);
+
+                // Montar estrutura dentro do <li>
+                li.appendChild(itemTexto);
                 li.appendChild(inputEditar);
-                li.appendChild(botaoEditar);
-                li.appendChild(botaoSalvar);
-                li.appendChild(botaoExcluir);
+                li.appendChild(botoes);
+
                 lista.appendChild(li);
             });
         });
