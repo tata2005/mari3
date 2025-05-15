@@ -128,71 +128,61 @@ li {
             }
         }
 
-function listarItens() {
-    fetch('/listar')
-        .then(response => response.json())
-        .then(produtos => {
-            var lista = document.getElementById("lista");
-            lista.innerHTML = "";
+        function listarItens() {
+            fetch('/listar')
+                .then(response => response.json())
+                .then(produtos => {
+                    var lista = document.getElementById("lista");
+                    lista.innerHTML = ""; // Limpa a lista antes de adicionar os novos elementos
 
-            produtos.forEach(produto => {
-                var li = document.createElement("li");
+                    produtos.forEach(produto => {
+                        var li = document.createElement("li");
 
-                // Criar área de texto
-                var itemTexto = document.createElement("span");
-                itemTexto.classList.add("item-texto");
-                itemTexto.innerText = produto.nome;
+                        var inputEditar = document.createElement("input");
+                        inputEditar.type = "text";
+                        inputEditar.value = produto.nome;
+                        inputEditar.id = "edit-" + produto.id;
+                        inputEditar.disabled = true; // Campo começa desativado
 
-                var inputEditar = document.createElement("input");
-                inputEditar.type = "text";
-                inputEditar.value = produto.nome;
-                inputEditar.id = "edit-" + produto.id;
-                inputEditar.style.display = "none"; // Oculta o campo de edição
+                        var botaoEditar = document.createElement("button");
+                        botaoEditar.innerText = "✏️ Editar";
+                        botaoEditar.classList.add("botao-editar");
+                        botaoEditar.onclick = function() {
+                            inputEditar.disabled = false; // Habilita edição ao clicar no botão
+                            inputEditar.focus(); // Dá foco no campo de edição
+                        };
 
-                // Criar bloco de botões
-                var botoes = document.createElement("div");
-                botoes.classList.add("botoes");
+                        var botaoSalvar = document.createElement("button");
+                        botaoSalvar.innerText = "💾 Salvar";
+                        botaoSalvar.classList.add("botao-salvar");
+                        botaoSalvar.style.display = "none"; // Oculta o botão de salvar até que seja necessário
+                        botaoSalvar.onclick = function() {
+                            editarItem(produto.id, inputEditar.value);
+                            inputEditar.disabled = true; // Bloqueia o campo novamente após salvar
+                            botaoSalvar.style.display = "none"; // Esconde o botão de salvar
+                        };
 
-                var botaoEditar = document.createElement("button");
-                botaoEditar.innerText = "✏️ Editar";
-                botaoEditar.classList.add("botao-editar");
-                botaoEditar.onclick = function() {
-                    inputEditar.style.display = "inline";
-                    inputEditar.focus();
-                    botaoSalvar.style.display = "inline";
-                };
+                        botaoEditar.onclick = function() {
+                            inputEditar.disabled = false;
+                            inputEditar.focus();
+                            botaoSalvar.style.display = "inline"; // Exibe o botão de salvar
+                        };
 
-                var botaoSalvar = document.createElement("button");
-                botaoSalvar.innerText = "💾 Salvar";
-                botaoSalvar.classList.add("botao-salvar");
-                botaoSalvar.style.display = "none"; // Oculta até ativado
-                botaoSalvar.onclick = function() {
-                    editarItem(produto.id, inputEditar.value);
-                    inputEditar.style.display = "none"; // Oculta campo após salvar
-                    botaoSalvar.style.display = "none"; // Esconde botão salvar
-                };
+                        var botaoExcluir = document.createElement("button");
+                        botaoExcluir.innerText = "❌ Excluir";
+                        botaoExcluir.classList.add("botao-excluir");
+                        botaoExcluir.onclick = function() {
+                            excluirItem(produto.id);
+                        };
 
-                var botaoExcluir = document.createElement("button");
-                botaoExcluir.innerText = "❌ Excluir";
-                botaoExcluir.classList.add("botao-excluir");
-                botaoExcluir.onclick = function() {
-                    excluirItem(produto.id);
-                };
-
-                // Adicionar botões ao bloco de botões
-                botoes.appendChild(botaoEditar);
-                botoes.appendChild(botaoSalvar);
-                botoes.appendChild(botaoExcluir);
-
-                // Montar estrutura dentro do <li>
-                li.appendChild(itemTexto);
-                li.appendChild(inputEditar);
-                li.appendChild(botoes);
-
-                lista.appendChild(li);
-            });
-        });
-}
+                        li.appendChild(inputEditar);
+                        li.appendChild(botaoEditar);
+                        li.appendChild(botaoSalvar);
+                        li.appendChild(botaoExcluir);
+                        lista.appendChild(li);
+                    });
+                });
+        }
 
         function excluirItem(id) {
             fetch(`/excluir/${id}`, {
